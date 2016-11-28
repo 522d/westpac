@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/stylesheets/bootstrap.min.css" />
+    <link rel="stylesheet" href="/stylesheets/bootstrap.theme.css" />
+
+    <script src="/javascripts/jq/index.js"></script>
+    <script src="/javascripts/bootstrap/dist/js/bootstrap.min.js"></script>
+
+    <style type="text/css">
+    table tr td
+    {
+        border: 1px solid black !important;
+        vertical-align: top;
+    }
+
+    .hidden
+    {
+        display: none;
+    }
+
+    .dbDiffInfo
+    {
+        height: 20vh;
+        font-size: small;
+        overflow-y: scroll;
+        overflow-x: scroll;
+        word-wrap: inherit;
+        width: 100%;
+    }
+    .toBlue
+    {
+        color: #5E9FED !important;
+    }
+
+    .toRed
+    {
+        color: red !important;
+    }
+
+    .toGreen
+    {
+        color: green !important;
+    }
+    </style>
+
+</head>
+<body>
+    <span id="runningVal"></span>
+    <div id="txtWrap" class="hidden">
+        <textarea id="txt"></textarea>
+    </div>
+    <div class="container">
+        <div class="col-md-4">
+            <h2>DB Compare Tool</h2>
+            Enter 2 database to compare
+        </div>
+        <form id="Database1" method="POST" action="/tables/CheckConnection" class="col-md-4 well well-sm">
+            <table class="table">
+                <tr>
+                    <td>Server:</td>
+                    <td>
+                        <input type="text" id="DB1_Server" name="DB_Server" /></td>
+                    </tr>
+                    <tr>
+                        <td>Username:</td>
+                        <td>
+                            <input type="text" id="DB1_User" name="DB_User" /></td>
+                        </tr>
+                        <tr>
+                            <td>Password:</td>
+                            <td>
+                                <input type="password" id="DB1_Password" name="DB_Password" /></td>
+                            </tr>
+                            <tr>
+                                <td>Database:</td>
+                                <td>
+                                    <input type="text" id="DB1_Database" name="DB_Database" /></td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td style="text-align: right;">
+                                        <input type="button" id="DB1_Form" name="DB1_Form" value="Test Connection"></td>
+                                    </tr>
+                                </table>
+                            </form>
+                            <form id="Database2" method="POST" action="/tables/CheckConnection" class="col-md-4 well well-sm">
+                                <table class="table">
+                                    <tr>
+                                        <td>Server:</td>
+                                        <td>
+                                            <input type="text" id="DB2_Server" name="DB2_Server" /></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Username:</td>
+                                            <td>
+                                                <input type="text" id="DB2_User" name="DB2_User" /></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Password:</td>
+                                                <td>
+                                                    <input type="password" id="DB2_Password" name="DB2_Password" /></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Database:</td>
+                                                    <td>
+                                                        <input type="text" id="DB2_Database" name="DB2_Database" /></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td></td>
+                                                        <td style="text-align: right;">
+                                                            <input type="button" id="DB2_Form" name="DB2_Form" value="Test Connection"></td>
+                                                        </tr>
+                                                    </table>
+                                                </form>
+                                                <div><span id="ErrorLog"></span></div>
+
+                                                <form id="Checker_Form">
+                                                    <input type="text" name="Checker_Database" id="Checker_Database" class="hidden">
+                                                    <input type="button" value="Compare Database" name="Checker_Submit" id="Checker_Submit">
+                                                </form>
+
+                                                <table class="container well col-md-6">
+                                                    <tr>
+                                                        <td colspan="3">
+                                                            <button id="create" class="hidden">Generate File</button>
+                                                            <a download="dbCompareResutls.txt" id="downloadlink" class="hidden">Download</a></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td colspan="3">
+                                                                Console:<br>
+                                                                <textarea class='col-sm-12 dbDiffInfo' style='height:150px;overflow:scroll' id='consoleDetails'></textarea>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="col-md-1">Tables<br/>
+                                                                <span id="tableStatus"></span>
+                                                            </td>
+                                                            <td class="col-md-4">
+                                                                <table class="table" id="compTable">
+                                                                </table>
+                                                            </td>
+                                                            <td class="col-md-4">
+                                                                <textarea id="textDifferences" name="textDifferences" class="dbDiffInfo"></textarea>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="col-md-1">Stored Procedures<br/>
+                                                                <span id="SPStatus"></span>
+                                                            </td>
+                                                            <td class="col-md-4">
+                                                                <table class="table" id="compP">
+                                                                </table>
+                                                            </td>
+                                                            <td class="col-md-4">
+                                                                <textarea id="SpDifferences" name="SpDifferences" class="dbDiffInfo"></textarea>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="col-md-1">Functions<br/>
+                                                                <span id="TFStatus"></span>
+                                                            </td>
+                                                            <td class="col-md-4">
+                                                                <table class="table" id="compTF">
+                                                                </table>
+                                                            </td>
+                                                            <td class="col-md-4">
+                                                                <textarea id="TFDifferences" name="TFDifferences" class="dbDiffInfo"></textarea>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="col-md-1">Triggers<br/>
+                                                                <span id="TRStatus"></span>
+                                                            </td>
+                                                            <td class="col-md-4">
+                                                                <table class="table" id="compTR">
+                                                                </table>
+                                                            </td>
+                                                            <td class="col-md-4">
+                                                                <textarea id="TRDifferences" name="TRDifferences" class="dbDiffInfo"></textarea>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="col-md-1">Views<br/>
+                                                                <span id="VStatus"></span>
+                                                            </td>
+                                                            <td class="col-md-4">
+                                                                <table class="table" id="compV">
+                                                                </table>
+                                                            </td>
+                                                            <td class="col-md-4">
+                                                                <textarea id="VDifferences" name="VDifferences" class="dbDiffInfo"></textarea>
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                    <div class="col-sm-6">
+                                                        <table class="table" id="compTable_details">
+                                                        </table>
+                                                        <table class="table" id="compTable_details2">
+                                                        </table>
+                                                    </div>
+
+                                                    <script src="/javascripts/angular/angular.min.js"></script>
+                                                    <script src="/javascripts/modules/tables.js"></script>
+
+                                                </div>
+
+                                            </body>
+                                            </html>
