@@ -33,6 +33,18 @@ router.get('/webhook/', function (req, res) {
 })
 
 
+router.get('/redirect_adobe/', function(req,res){
+        if(req.query['redirect_uri'] == ''){
+                req.send(req.query['something'])
+        }
+
+        res.send('Error, wrong token');
+});
+
+router.post('/redirect_adobe/', function (req, res) {
+    res.sendStatus(200)
+});
+
 router.post('/webhook/', function (req, res) {
     messaging_events = req.body.entry[0].messaging
     for (i = 0; i < messaging_events.length; i++) {
